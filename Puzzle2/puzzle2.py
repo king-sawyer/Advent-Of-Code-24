@@ -8,7 +8,7 @@ Add up the total number of rows that satisfy the following two rules:
 def puzzle2Part1():
 
     "Utilizing readlines vs pandas as the data is stored in rows compared to columns"
-    with open('data.txt', 'r') as file:
+    with open('datacpy.txt', 'r') as file:
         data = file.readlines()
 
     "Converting each row to an array of integers stored in the parrent array: rows"
@@ -16,6 +16,9 @@ def puzzle2Part1():
 
     "The number of rows that satisty both rules"
     firstRule = 0
+    asc = 0
+    desc = 0
+    neither = 0
 
     "Iterate over each row checking the first rule then the second if first rule is satisfied"
     for row in rows:
@@ -28,9 +31,11 @@ def puzzle2Part1():
 
 "Checking the first rule"
 def checkAscendingOrDescending(row):
+
     asc = {'number': [],
             'index': [],
             'row': row}
+    
     desc = {'number': [],
             'index': [],
             'row': row}
@@ -39,30 +44,33 @@ def checkAscendingOrDescending(row):
     
     "Check if row is ascending or descending"
     for i in range(len(row) - 1):
+        for j in range(i + 1, len(row)):
+            if row[i] > row[j]:
+                asc['index'].append(i)
+                asc['number'].append(row[i])
+                break
+                
+            
+            if row[i] < row[j]:
+                desc['index'].append(i)
+                desc['number'].append(row[i])
+                break
+                
 
-        if row[i] <= row[i+1]:
-            desc['index'].append(i+1)
-            desc['number'].append(row[i+1])
-            "check the current number with two numbers ahead"
-            if i+2 < len(row) and row[i] <= row[i+2]:
-                    desc['index'].append(i+2)
-                    desc['number'].append(row[i+2])
-        if row[i] >= row[i+1]:
-            asc['index'].append(i+1)
-            asc['number'].append(row[i+1])
-            "check the current number with two numbers ahead"
-            if i + 2 < len(row) and row[i] >= row[i+2]:
-                    asc["index"].append(i+2)
-                    asc['number'].append(row[i+2])
+
 
 
     if len(asc["index"]) < 2:
-        #print(f"ASCENDING: {asc}")
+       
         totalSafeRows += checkNumDiffer(asc)
-    if len(desc['index']) < 2:
-        #print(f"DESCENDING: {desc}")
-
+    elif len(desc['index']) < 2:
+        
+            
         totalSafeRows += checkNumDiffer(desc)
+    else:
+        print(f"Neither row: {row}")
+        #return "neither"
+
 
     return totalSafeRows
     
@@ -80,40 +88,45 @@ def checkNumDiffer(row):
         if differ not in (1, 2, 3):
             if i+2 < len(row['row']):
                 nextDiffer = abs(row['row'][i] - row['row'][i+2])
-                if nextDiffer in (1,2,3):
+                if nextDiffer in (1,2,3) and i != 0:
                     differErrors['index'].append(i+1)
-                    differErrors['number'].append(row['row'][i+1])
-                    i+=2
-                else:
-                    differErrors['index'].append(i+1)
-                    differErrors['number'].append(row['row'][i+1])
+                    differErrors['number'].append(row['row'][i+1]) 
                     differErrors['index'].append(i+2)
-                    differErrors['number'].append(row['row'][i+2])
+                    differErrors['number'].append(row['row'][i+2]) 
+                else:
+                    differErrors['index'].append(i)
+                    differErrors['number'].append(row['row'][i])
             else:
                 differErrors['index'].append(i+1)
                 differErrors['number'].append(row['row'][i+1])
 
+    # 8 6 4 4 1
+
+   
+                
                     
-    if len(differErrors['index']) < 2:
-        if len(differErrors['index']) == 1:
-            print(f"Row: {row}")
-            print(f"numbers that differ from the following not by 1,2,3: {differErrors['number']} index: {differErrors['index']}\n")
 
     if len(differErrors['index']) == 0 and len(row['index']) == 0:
         safeRows += 1
-        print(f"Row is safe: {row['row']}")
+        print(f"Row is safe: {row['row']} - No ascending/descending errors and no differ errors")
     elif len(differErrors['index']) == 1 and len(row['index']) == 1:
         if differErrors['index'] == row['index']:
-            # print(f"{differErrors['index']} == {row['index']}")
-            print(f"Row is safe: {row['row']}")
+            print(f"Row is safe: {row['row']} - One error in the same index")
+            print(f"numbers: {differErrors['number']} Indexes: {differErrors['index']}\n")
             safeRows += 1
     elif len(differErrors['index']) == 1 and len(row['index']) == 0:
-        print(f"Row is safe: {row['row']}")
+        print(f"Row is safe: {row['row']} - one differ error")
+        print(f"numbers: {differErrors['number']} Indexes: {differErrors['index']}\n")
         safeRows += 1
     elif len(differErrors['index']) == 0 and len(row['index']) == 1:
-        print(f"Row is safe: {row['row']}")
+        print(f"Row is safe: {row['row']} - one ascending/descending error")
+        print(f"numbers: {row['number']} Indexes: {row['index']}\n")
         safeRows += 1
-    print("\n")
+    else:
+        print(f"\nRow is not safe: {row['row']}")
+        print(f"Differ errors: {differErrors}")
+        print(f"Ascending/Descending errors: {row['number']} Indexes: {row['index']}\n")
+
 
     return safeRows
 
