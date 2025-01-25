@@ -7,9 +7,7 @@ Part 1:
 Things that I learned about python:
 - split() returns a list where every item starts at the next seperator found. It does not include the seperator in the list.
 """
-def puzzle_3() -> int:
-
-    data = open("data.txt", "r").read()
+def part_1(data: str) -> int:
 
     total = 0
     locations = data.split('mul(')
@@ -26,4 +24,23 @@ def puzzle_3() -> int:
 
     return total
 
-print(puzzle_3())
+def part_2(data: str) -> int:
+
+    return_string = ""
+    conditionals = data.split('do')
+    
+    for conditional in conditionals:
+        if len(conditional) > 3:
+            if conditional[0] == "n" and conditional[1] == "'" and conditional[2] == "t":
+                continue
+            else:
+                return_string += conditional
+
+    return part_1(return_string)
+
+def main():
+    data = open("data.txt", "r").read()
+    print(f"Part 1: {part_1(data)}")
+    print(f"Part 2: {part_2(data)}")
+
+main()
