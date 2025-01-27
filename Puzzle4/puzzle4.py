@@ -3,7 +3,7 @@ from typing import List
 WIDTH = 0
 HEIGHT = 0
 
-def part_1(rows: List[str]) -> int:
+def part_1(data: List[str]) -> int:
 
 
     check_string = ['M', 'A', 'S']
@@ -22,18 +22,43 @@ def part_1(rows: List[str]) -> int:
     }
 
     # Extract x locations
-    for i, row in enumerate(rows):
+    for i, row in enumerate(data):
         for j in range(len(row)):
             if row[j] == 'X': x_array.append([i, j])
 
     for x_location in x_array:
         for direction in lines.values():
-            words_found += check_adjacent(x_location[0], x_location[1], direction, 0, rows, check_string, string_index=0)
+            words_found += check_adjacent(x_location[0], x_location[1], direction, 0, data, check_string, string_index=0)
 
     return words_found
 
-def check_adjacent(current_row, current_col, line, line_index, data, check_string, string_index) -> bool:
+def part_2(data: List[str]) -> int:
 
+    check_string = [['M', 'S', 'M', 'S'],
+                    ['M', 'M', 'S', 'S'],
+                    ['S', 'S', 'M', 'M'],
+                    ['S', 'M', 'S', 'M']]
+    
+    lines = [(-1,-1), (-1,1), (1,1), (1,-1)]
+
+    a_array = []
+    words_found = 0
+
+    # Extract a locations
+    for i, row in enumerate(data):
+        for j in range(len(row)):
+            if row[j] == 'A': a_array.append([i, j])
+
+    for substring in check_string:
+        print(f"Checking: {substring}")
+        for a_location in a_array:
+            words_found += check_adjacent(a_location[0], a_location[1], lines, 0, data, substring, string_index=0)
+
+    return words_found
+
+
+
+def check_adjacent(current_row, current_col, line, line_index, data, check_string, string_index) -> bool:
     if line_index > len(line):
         return False
     
@@ -52,7 +77,7 @@ def check_adjacent(current_row, current_col, line, line_index, data, check_strin
     
 
 def main() -> int:
-    with open('data.txt', 'r') as file:
+    with open('ex.txt', 'r') as file:
             data = [line.strip() for line in file.readlines()]
 
     global WIDTH 
@@ -62,7 +87,8 @@ def main() -> int:
     HEIGHT = len(data)
     
 
-    print(part_1(data))
+    # print(part_1(data))
+    print(part_2(data))
 
     return 0
 
