@@ -34,6 +34,40 @@ def check_row(num, row, x_y_values) -> bool:
 
     return True
 
+def part_2(x_y_values, rules) -> int:
+
+    correct_rows = []
+    incorrect_rows = []
+    return_value = 0
+
+    for rule in rules:
+        for i in range(len(rule)):
+            result = check_row(rule[i], rule[:i], x_y_values)
+            if not result: break
+        if not result:
+            incorrect_rows.append(rule)
+
+    for row in incorrect_rows:
+        
+        for i in range(len(row)):
+            j = len(row) -1
+
+            if not row[i] in x_y_values: 
+                row.append(row[i])
+                row.remove(row[i])
+
+            while i < j:                    
+                if row[j] in x_y_values[row[i]]:
+                    j -=1
+                else:
+                    row[j], row[i] = row[i], row[j]
+
+    for row in incorrect_rows:
+        return_value += row[len(row) // 2]
+
+    return return_value
+
+
 def main() -> int:
     with open("data.txt", "r") as file:
         data = file.read().strip()
@@ -50,6 +84,7 @@ def main() -> int:
     rules = [list(map(int, line.split(","))) for line in sections[1].splitlines()]
 
     print(f"Part 1: {part_1(x_y_values, rules)}")
+    print(f"Part 2: {part_2(x_y_values, rules)}")
 
     return 0
 
